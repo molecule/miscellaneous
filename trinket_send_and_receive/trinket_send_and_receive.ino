@@ -34,12 +34,12 @@ int button = 0;
 
 #define SEND_ONES 1 
 #define SEND_TWOS 2
-int role = SEND_TWOS;
+int role = SEND_ONES;
 int expecting;
 int sending;
 int allOnes = 0x11111111;
 int allTwos = 0x22222222;
-int buttonVal;
+int buttonVal = LOW;
 
 IRsend irsend;
 
@@ -105,14 +105,14 @@ void printcode(void) {
 uint16_t listenForIR() {  // IR receive code
   currentpulse = 0;
   while (1) {
+    buttonVal = digitalRead(button);
+      if (HIGH == buttonVal) {
+        return 0; 
+      } 
    unsigned int highpulse, lowpulse;  // temporary storage timing
    highpulse = lowpulse = 0; // start out with no pulse length 
   
    while (IRpin_PIN & _BV(IRpin)) { // got a high pulse
-      //buttonVal = digitalRead(button);
-      //if (HIGH == buttonVal) {
-        //return 0; 
-      //} 
       highpulse++; 
       delayMicroseconds(RESOLUTION);
       if (((highpulse >= MAXPULSE) && (currentpulse != 0))|| currentpulse == NUMPULSES) {
@@ -122,10 +122,6 @@ uint16_t listenForIR() {  // IR receive code
    pulses[currentpulse][0] = highpulse;
 
    while (! (IRpin_PIN & _BV(IRpin))) { // got a low pulse
-     //buttonVal = digitalRead(button);
-     //if (HIGH == buttonVal) {
-      //  return 0; 
-      //}
       //Serial.println("low pulse");
       lowpulse++; 
       delayMicroseconds(RESOLUTION);
