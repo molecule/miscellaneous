@@ -105,10 +105,6 @@ void printcode(void) {
 uint16_t listenForIR() {  // IR receive code
   currentpulse = 0;
   while (1) {
-    buttonVal = digitalRead(button);
-      if (HIGH == buttonVal) {
-        return 0; 
-      } 
    unsigned int highpulse, lowpulse;  // temporary storage timing
    highpulse = lowpulse = 0; // start out with no pulse length 
   
