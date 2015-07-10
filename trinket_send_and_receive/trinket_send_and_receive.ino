@@ -6,12 +6,16 @@
  * http://arcfn.com
  */
  
+ 
+ 
+ #include <PinChangeInterrupt.h>
  // #install <SoftwareSerial.h>       // use if you do not wish to use the lightweight library 
 #include <SendOnlySoftwareSerial.h>  // See http://forum.arduino.cc/index.php?topic=112013.0
  
 // SoftwareSerial Serial(1,0);      // Receive, Transmit (Receive not used)
-SendOnlySoftwareSerial Serial(0);   // Transmit serial on Trinket/Gemma pin GPIO #0/D0
+SendOnlySoftwareSerial Serial(4);   // Transmit serial on Trinket/Gemma pin GPIO #4
 
+const int buttonPin = 0;
 #include <IRremote.h>
 
 // We need to use the 'raw' pin reading methods because timing is very important here 
@@ -30,7 +34,6 @@ uint16_t currentpulse = 0; // index for pulses we're storing
 uint32_t irCode = 0;
 
 int led = 1; // blink 'digital' pin 1 - AKA the built in red LED
-int button = 0;
 
 #define SEND_ONES 1 
 #define SEND_TWOS 2
@@ -56,21 +59,22 @@ void setup()
   Serial.println("trinket_send_and_receive");
   // initialize the digital pin as an output.
   pinMode(led, OUTPUT);
-  pinMode(button, INPUT);
+  pinMode(buttonPin, INPUT_PULLUP);
+  attachPcInterrupt(buttonPin, button_press, RISING);   // detection type CHANGE, FALLING, or RISING
   pinMode(IRpin, INPUT);   // Listen to IR receiver on Trinket/Gemma pin D2
 }
 
+void button_press() {
+  Serial.print("sending: ");
+  Serial.println(sending);
+  irsend.sendNEC(sending, 32); // 38kHz
+  digitalWrite(led, HIGH);
+  delay(40);
+  digitalWrite(led, LOW);
+  delay(3000);
+}
+
 void loop() {
-  buttonVal = digitalRead(button);
-  if (buttonVal == HIGH) {
-    Serial.print("sending: ");
-    Serial.println(sending);
-    irsend.sendNEC(sending, 32); // 38
-    digitalWrite(led, HIGH);
-    delay(40);
-    digitalWrite(led, LOW);
-    delay(3000);
-  } else {
     Serial.println("listening...");
     uint16_t numpulse=listenForIR(); // Wait for an IR Code
 
@@ -94,7 +98,7 @@ void loop() {
     } else {
       digitalWrite(led, LOW);
     }
-  }
+  delay(500);
 }
 
 void printcode(void) {
