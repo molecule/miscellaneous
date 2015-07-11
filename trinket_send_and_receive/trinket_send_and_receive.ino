@@ -13,15 +13,16 @@
 #ifdef __AVR_ATtiny85__ // Trinket, Gemma, etc.
  #include <avr/power.h>
 #endif
-#define PIN 0
+
+#define PIN 3
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(32, PIN);
  
 #include <PinChangeInterrupt.h>
-#include <SoftwareSerial.h>       // use if you do not wish to use the lightweight library 
-//#include <SendOnlySoftwareSerial.h>  // See http://forum.arduino.cc/index.php?topic=112013.0
+//#include <SoftwareSerial.h>       // use if you do not wish to use the lightweight library 
+#include <SendOnlySoftwareSerial.h>  // See http://forum.arduino.cc/index.php?topic=112013.0
  
-SoftwareSerial Serial(1,0);      // Receive, Transmit
-//SendOnlySoftwareSerial Serial(4);   // Transmit serial on Trinket/Gemma pin GPIO #4
+//SoftwareSerial Serial(1,0);      // Receive, Transmit
+SendOnlySoftwareSerial Serial(4);   // Transmit serial on Trinket/Gemma pin GPIO #4
 
 const int buttonPin = 0;
 #include <IRremote.h>
