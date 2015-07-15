@@ -17,15 +17,17 @@
 #define PIN 3
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(32, PIN);
  
-#include <PinChangeInterrupt.h>
+#include <PinChangeInt.h>
+//#include <PinChangeInterrupt.h>
 //#include <SoftwareSerial.h>       // use if you do not wish to use the lightweight library 
-#include <SendOnlySoftwareSerial.h>  // See http://forum.arduino.cc/index.php?topic=112013.0
+//#include <SendOnlySoftwareSerial.h>  // See http://forum.arduino.cc/index.php?topic=112013.0
  
 //SoftwareSerial Serial(1,0);      // Receive, Transmit
-SendOnlySoftwareSerial Serial(4);   // Transmit serial on Trinket/Gemma pin GPIO #4
+//SendOnlySoftwareSerial Serial(4);   // Transmit serial on Trinket/Gemma pin GPIO #4
 
-const int buttonPin = 0;
-#include <IRremote.h>
+const int buttonPin = 8;
+//#include <IRremote.h>
+#include <IRLib.h>
 
 // We need to use the 'raw' pin reading methods because timing is very important here 
 // and the digitalRead() procedure is slower!
@@ -42,7 +44,7 @@ uint16_t pulses[NUMPULSES][2]; // pair is high and low pulse
 uint16_t currentpulse = 0; // index for pulses we're storing
 uint32_t irCode = 0;
 
-int led = 1; // blink 'digital' pin 1 - AKA the built in red LED
+int led = 13; // blink built in LED
 
 #define SEND_ONES 1 
 #define SEND_TWOS 2
@@ -69,14 +71,15 @@ void setup()
   // initialize the digital pin as an output.
   pinMode(led, OUTPUT);
   pinMode(buttonPin, INPUT_PULLUP);
-  attachPcInterrupt(buttonPin, button_press, RISING);   // detection type CHANGE, FALLING, or RISING
+  PCintPort::attachInterrupt(buttonPin, button_press, RISING);  // detection type CHANGE, FALLING, or RISING
   pinMode(IRpin, INPUT);   // Listen to IR receiver on Trinket/Gemma pin D2
 }
 
 void button_press() {
   Serial.print("sending: ");
   Serial.println(sending);
-  irsend.sendNEC(sending, 32); // 38kHz
+  //irsend.sendNEC(sending, 32); // 38kHz
+  irsend.send(NEC, sending, 32); 
   digitalWrite(led, HIGH);
   delay(40);
   digitalWrite(led, LOW);
@@ -109,6 +112,26 @@ void loop() {
     }
   delay(500);
 }
+/*
+void setupPixels() {
+  #ifdef __AVR_ATtiny85__ // Trinket, Gemma, etc.
+  if(F_CPU == 16000000) clock_prescale_set(clock_div_1);
+  #endif
+  pixels.begin();
+  pixels.setBrightness(85); // 1/3 brightness
+}
+
+void blinkPixels(int numPixels, uint32_t c, int wait) {
+   for(int i=0; i<numPixels; i++) {
+    pixels.setPixelColor(i, c); 
+   }
+   pixels.show();
+   delay(wait);
+   for(int i=0; i<numPixels; i++) {
+    pixels.setPixelColor(i, 0); 
+   }
+}
+*/
 
 void printcode(void) {
   Serial.print("0x");
