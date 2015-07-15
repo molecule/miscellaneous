@@ -17,7 +17,7 @@
 #define PIN 3
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(32, PIN);
  
-#include <PinChangeInterrupt.h>
+#include <PinChangeInterruptTrinket.h>
 //#include <SoftwareSerial.h>       // use if you do not wish to use the lightweight library 
 #include <SendOnlySoftwareSerial.h>  // See http://forum.arduino.cc/index.php?topic=112013.0
  
