@@ -27,14 +27,6 @@ int NUM_LEDS = 2;
 int LED_PIN = 4;
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
 
-// Convenient 2D point structure
-struct Point {
-  float x;
-  float y;
-};
-
-float colorStretch = 0.11;    // Higher numbers will produce tighter color bands. I like 0.11
-
 // Simple moving average
 float yValues[] = {
   0,
@@ -82,8 +74,10 @@ int delayTimes[] = {
 };
 
 #define numDelayOptions (sizeof(delayTimes)/sizeof(int)) //array size  
-
 int NUM_Y_VALUES = 17;
+
+float (*functionPtrs[10])(); //the array of function pointers
+int NUM_FUNCTIONS = 2;
 
 void setup() {
 
@@ -93,20 +87,26 @@ void setup() {
   // Neopixel setup
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
+
+  // initializes the array of function pointers.
+  functionPtrs[0] = simple_moving_average;
+  functionPtrs[1] = random_moving_average;
 }
 
 int currentDataPoint = 0;
 void loop() {
   if (random(10) == 3) {
+    int led = random(NUM_LEDS);
     for (int i = 0; i < 10; i++) {
-      lightningStrike(0);
+      lightningStrike(led);
     }
   }
   turnAllPixelsOff();
 
   if (random(10) == 3) {
+    int led = random(NUM_LEDS);
     for(int i = 0; i < 10; i++) {
-      lightningStrike(1);
+      lightningStrike(led);
     }
   }
 
@@ -128,7 +128,7 @@ void lightningStrike(int pixel) {
   Serial.print("currentDataPoint: ");
   Serial.println(currentDataPoint);
   //float brightness = simple_moving_average(currentDataPoint, (currentDataPoint+1)%NUM_Y_VALUES);
-  float brightness = random_moving_average();
+  float brightness = callFunction(random(NUM_FUNCTIONS));
 
   Serial.print("Brightness: ");
   Serial.println(brightness);
@@ -144,8 +144,14 @@ void lightningStrike(int pixel) {
   currentDataPoint = currentDataPoint%NUM_Y_VALUES;
 }
 
+float callFunction(int index) {
+  return (*functionPtrs[index])(); //calls the function at the index of `index` in the array
+}
+
 // https://en.wikipedia.org/wiki/Moving_average#Simple_moving_average
-float simple_moving_average(uint32_t startingValue, uint32_t endingValue) {
+float simple_moving_average() {
+  uint32_t startingValue = currentDataPoint;
+  uint32_t endingValue = (currentDataPoint+1)%NUM_Y_VALUES;
   simple_moving_average_current = simple_moving_average_previous + 
                                   (yValues[startingValue])/NUM_Y_VALUES - 
                                   (yValues[endingValue])/NUM_Y_VALUES;
