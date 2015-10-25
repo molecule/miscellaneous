@@ -38,26 +38,29 @@ float colorStretch = 0.11;    // Higher numbers will produce tighter color bands
 // Simple moving average
 float yValues[] = {
   0,
-  0.707,
-  1,
-  0.9,
-  0.707,
-  0.71,
-  0.74,
-  1.2,
-  1.5,
-  1,
+  7,
+  10,
+  9,
+  7.1,
+  7.5,
+  7.4,
+  12,
+  15,
+  10,
   0,
-  0.3,
-  0.35,
-  0.4,
+  3,
+  3.5,
+  4,
   1,
-  0.707,
+  7,
   1
 };
 
 float simple_moving_average_previous = 0;
 float simple_moving_average_current;
+
+float random_moving_average_previous = 0;
+float random_moving_average_current;
 
 int delayTimes[] = {
   1,
@@ -82,17 +85,6 @@ int delayTimes[] = {
 
 int NUM_Y_VALUES = 17;
 
-int len = 5;
-float theta_1 = 0.0;
-float theta_2 = 0.0;
-float theta_Increment = 50; // Controls the speed of the moving points. Higher == faster. I like 0.03
-float t_Increment = 0.03;
-float t = 0.0;
-
-int currentPixel = 0;
-
-#define NUM_ROSES 3
-float k[NUM_ROSES];
 void setup() {
 
   // set up serial port
@@ -135,7 +127,8 @@ void turnAllPixelsOff() {
 void lightningStrike(int pixel) {
   Serial.print("currentDataPoint: ");
   Serial.println(currentDataPoint);
-  float brightness = simple_moving_average(currentDataPoint, (currentDataPoint+1)%NUM_Y_VALUES);
+  //float brightness = simple_moving_average(currentDataPoint, (currentDataPoint+1)%NUM_Y_VALUES);
+  float brightness = random_moving_average();
 
   Serial.print("Brightness: ");
   Serial.println(brightness);
@@ -174,97 +167,18 @@ float simple_moving_average(uint32_t startingValue, uint32_t endingValue) {
   return simple_moving_average_current;
 }
 
-void lightning() {
-  t += t_Increment;
-  
-  // Based on the harmonic movement of a double pendulum: https://en.wikipedia.org/wiki/Double_pendulum
-  Point rose1 = { (cos(1.000*t)*cos(t)*4.5), (cos(1.310*t)*sin(t)*4.0) };
-  Point rose2 = { (cos(1.770*t)*cos(t)*4.5), (cos(2.865*t)*sin(t)*4.0) };
-  Point rose3 = { (cos(0.250*t)*cos(t)*4.5), (cos(0.750*t)*sin(t)*4.0) };
-//  Point lissajous = { (A*sin(a*t + sigma)), (B*sin(b*t)) };
-  //  x=A\sin(at+\delta),\quad y=B\sin(bt), 
-  
-  
-  byte row, col;
-  
-  // For each row...
-  for( row=0; row<5; row++ ) {
-    float row_f = float(row);  // Optimization: Keep a floating point value of the row number, instead of recasting it repeatedly.
-    
-    // For each column...
-    for( col=0; col<8; col++ ) {
-      float col_f = float(col);  // Optimization.
-      
-      // Calculate the distance between this LED, and rose1.
-      Point dist1 = { col_f - rose1.x, row_f - rose1.y };  // The vector
-      float distance1 = sqrt( dist1.x*dist1.x + dist1.y*dist1.y );
-      
-      // Calculate the distance between this LED, and rose2.
-      Point dist2 = { col_f - rose2.x, row_f - rose2.y };  // The vector
-      float distance2 = sqrt( dist2.x*dist2.x + dist2.y*dist2.y );
-      
-      // Calculate the distance between this LED and rose3.
-      Point dist3 = { col_f - rose3.x, row_f - rose3.y };
-      float distance3 = sqrt( dist3.x*dist3.x + dist3.y*dist3.y );
-      
-      // Warp the distance with a sin() function. As the distance value increases, the LEDs will get light,dark,light,dark,etc...
-      // You can use a cos() for slightly different shading, or experiment with other functions. Go crazy!
-      float color_1 = distance1;  // range: 0.0...1.0
-      float color_2 = distance2;
-      float color_3 = distance3;
-      float color_4 = (sin( distance1 * distance2 * colorStretch )) + 2.0 * 0.5;
-      
-      // Square the color_f value to weight it towards 0. The image will be darker and have higher contrast.
-      color_1 *= color_1 * color_4;
-      color_2 *= color_2 * color_4;
-      color_3 *= color_3 * color_4;
-      color_4 *= color_4;
- 
-      // Scale the color up to 0..7 . Max brightness is 7.
-      // calming Seaside
-      //strip.setPixelColor(col + (8 * row), strip.Color(color_1, color_2, color_3));
-      // burning christmas tree
-      //strip.setPixelColor(col + (8 * row), strip.Color(color_2, color_3, color_4));
-      // perfect fairies
-      //strip.setPixelColor(col + (8 * row), strip.Color(color_2, color_3, color_1));
-      // lightning???
-      //currentPixel = col+(8*row);
-      //cycle_color_fade(color_2, color_3, color_1, 0, 0, 0);
-      int scaledWhite = color_1*4;
-      if (scaledWhite < 10) { scaledWhite = 0; }
-      strip.setPixelColor(col+(8*row), strip.Color(scaledWhite, scaledWhite, scaledWhite));
-      //strip.setPixelColor(col + (8 * row), strip.Color(color_3, color_2, color_1));
-      //strip.setPixelColor(col + (8 * row), strip.Color(color_2, color_4, color_3));
-    }
-  }
-  strip.setBrightness(75);
-  strip.show();
+
+float random_moving_average() {
+  float firstValue = random(1, 10);
+  float secondValue = random(1, 10);
+  Serial.print("first: ");
+  Serial.println(firstValue);
+  Serial.print("first/NUM_Y_VALUES");
+  Serial.println(firstValue/NUM_Y_VALUES);
+  random_moving_average_current = random_moving_average_previous +
+                                  firstValue/NUM_Y_VALUES -
+                                  secondValue/NUM_Y_VALUES;
+  random_moving_average_previous = random_moving_average_current;
+
+  return random_moving_average_current;
 }
-
-// Passing in 0 for the "end" values means the LEDs will fade
-// to off. You can change these to other color values
-// to fade between two colors.
-void cycle_color_fade(int rStart, int gStart, int bStart, int rEnd, int gEnd, int bEnd) {
-  int Rstart = rStart;
-  int Gstart = gStart;
-  int Bstart = bStart;
-
-  int Rend = rEnd;
-  int Gend = gEnd;
-  int Bend = bEnd;
-
-  // larger values of 'n' will give a smoother/slower transition.
-  int n = 100;
-  for(int i = 0; i < n; i++) {
-    for(int j = 0; j<strip.numPixels(); j++) {
-      float Rnew = Rstart + (Rend - Rstart) * i / n;
-      float Gnew = Gstart + (Gend - Gstart) * i / n;
-      float Bnew = Bstart + (Bend - Bstart) * i / n;
-      strip.setPixelColor(j, strip.Color(Rnew, Gnew, Bnew));
-    }
-    strip.show();
-    delay(10);
-  }
-} 
-
-
