@@ -23,7 +23,7 @@
 //   NEO_GRB     Pixels are wired for GRB bitstream
 //   NEO_KHZ400  400 KHz bitstream (e.g. FLORA pixels)
 //   NEO_KHZ800  800 KHz bitstream (e.g. High Density LED strip)
-int NUM_LEDS = 2;
+int NUM_LEDS = 4;
 int LED_PIN = 4;
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
 
@@ -95,15 +95,19 @@ void setup() {
 
 int currentDataPoint = 0;
 void loop() {
+
+  int secondChance = 10;
+  
   if (random(10) == 3) {
     int led = random(NUM_LEDS);
     for (int i = 0; i < 10; i++) {
-      lightningStrike(led);
+      lightningStrike(random(NUM_LEDS));
     }
+    secondChance = 10;
   }
   turnAllPixelsOff();
 
-  if (random(10) == 3) {
+  if (random(secondChance) == 3) {
     int led = random(NUM_LEDS);
     for(int i = 0; i < 10; i++) {
       lightningStrike(led);
@@ -112,8 +116,6 @@ void loop() {
 
   turnAllPixelsOff();
   delay(1000);
-
-  
   
 }
 
@@ -125,17 +127,8 @@ void turnAllPixelsOff() {
 }
 
 void lightningStrike(int pixel) {
-  Serial.print("currentDataPoint: ");
-  Serial.println(currentDataPoint);
-  //float brightness = simple_moving_average(currentDataPoint, (currentDataPoint+1)%NUM_Y_VALUES);
   float brightness = callFunction(random(NUM_FUNCTIONS));
-
-  Serial.print("Brightness: ");
-  Serial.println(brightness);
   float scaledWhite = abs(brightness*500);
-  Serial.print("scaledWhite: ");
-  Serial.println(scaledWhite);
-  Serial.println(" ");
   
   strip.setPixelColor(pixel, strip.Color(scaledWhite, scaledWhite, scaledWhite));
   strip.show();
