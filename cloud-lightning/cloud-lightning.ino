@@ -53,27 +53,7 @@ float simple_moving_average_current;
 
 float random_moving_average_previous = 0;
 float random_moving_average_current;
-
-int delayTimes[] = {
-  1,
-  3,
-  5,
-  5,
-  10,
-  15,
-  30,
-  50,
-  10,
-  15,
-  20,
-  25,
-  25,
-  25,
-  30,
-  50
-};
-
-#define numDelayOptions (sizeof(delayTimes)/sizeof(int)) //array size  
+ 
 int NUM_Y_VALUES = 17;
 
 float (*functionPtrs[10])(); //the array of function pointers
@@ -94,29 +74,40 @@ void setup() {
 }
 
 int currentDataPoint = 0;
+int chance = 5;
+String TRIGGER_LIGHTNING_STORM = String("LIGHTNING");
 void loop() {
 
-  int secondChance = 10;
-  
-  if (random(10) == 3) {
+  //if (readFromBluetooth() == TRIGGER_LIGHTNING_STORM) {
+  if (random(chance) == 3) {
     int led = random(NUM_LEDS);
     for (int i = 0; i < 10; i++) {
       lightningStrike(random(NUM_LEDS));
     }
-    secondChance = 10;
+    chance = 10;
+  } else {
+    chance = 5;
   }
-  turnAllPixelsOff();
-
-  if (random(secondChance) == 3) {
-    int led = random(NUM_LEDS);
-    for(int i = 0; i < 10; i++) {
-      lightningStrike(led);
-    }
-  }
-
   turnAllPixelsOff();
   delay(1000);
+}
+
+/**
+ * Read the data from the BLE, breaking on '\n' and '\r' characters.
+ */
+String readFromBluetooth() {
+  String readString = "";
   
+    while (Serial.available()) {
+    delay(10);  //small delay to allow input buffer to fill
+
+    char c = Serial.read(); //gets one byte from serial buffer
+    if (c == '\n' || c == '\r') {
+      break;
+    }
+    readString += c;
+  } 
+  return readString;
 }
 
 void turnAllPixelsOff() {
@@ -132,7 +123,7 @@ void lightningStrike(int pixel) {
   
   strip.setPixelColor(pixel, strip.Color(scaledWhite, scaledWhite, scaledWhite));
   strip.show();
-  delay(delayTimes[random(numDelayOptions)]);
+  delay(random(1, 30));
   currentDataPoint++;
   currentDataPoint = currentDataPoint%NUM_Y_VALUES;
 }
