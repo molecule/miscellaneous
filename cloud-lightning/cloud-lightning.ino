@@ -91,8 +91,8 @@ int BLUE_INDEX = 2;
 void loop() {
 
   if(state == SUNNY) {
-    cycle_color_control(startingColors[RED_INDEX], 
-                        startingColors[GREEN_INDEX], 
+    cycle_color_control(startingColors[RED_INDEX],
+                        startingColors[GREEN_INDEX],
                         startingColors[BLUE_INDEX],
                         endingColors[RED_INDEX],
                         endingColors[GREEN_INDEX],
@@ -106,10 +106,12 @@ void loop() {
   //if (random(chance) == 3) {
     handleLightning();
     chance = 10;
+    turnAllPixelsOff();
   } else {
     chance = 5;
+    turnAllPixelsOff();
   }
-  turnAllPixelsOff();
+
   delay(1000);
 }
 
@@ -131,7 +133,7 @@ void cycle_color_control(int rStart, int gStart, int bStart, int rEnd, int gEnd,
     }
     strip.show();
     delay(10);
-  }  
+  }
 }
 
 void handleLightning() {
