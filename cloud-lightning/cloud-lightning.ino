@@ -76,6 +76,18 @@ void setup() {
 int currentDataPoint = 0;
 int chance = 5;
 String TRIGGER_LIGHTNING_STORM = String("LIGHTNING");
+String SUNNY_DAY = String("SUNNY");
+String CLOUD_DAY = String("CLOUDY");
+
+enum State: byte {
+  SUNNY, CLOUDY, STORMY
+};
+State state = SUNNY; 
+int startingColors[] = {5, 1, 0};
+int endingColors[] = {44, 25, 1};
+int RED_INDEX = 0;
+int GREEN_INDEX = 1;
+int BLUE_INDEX = 2;
 void loop() {
 
   //if (readFromBluetooth() == TRIGGER_LIGHTNING_STORM) {
