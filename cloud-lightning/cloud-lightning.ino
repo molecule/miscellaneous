@@ -82,27 +82,29 @@ String CLOUD_DAY = String("CLOUDY");
 enum State: byte {
   SUNNY, CLOUDY, STORMY
 };
-State state = SUNNY; 
+State state = CLOUDY; 
 int startingColors[] = {5, 1, 0};
 int endingColors[] = {44, 25, 1};
+int startingCloudColors[] = {5, 7, 10};
+int endingCloudColors[] = {25, 27, 30};
 int RED_INDEX = 0;
 int GREEN_INDEX = 1;
 int BLUE_INDEX = 2;
 void loop() {
 
   if(state == SUNNY) {
-    cycle_color_control(startingColors[RED_INDEX],
-                        startingColors[GREEN_INDEX],
-                        startingColors[BLUE_INDEX],
-                        endingColors[RED_INDEX],
-                        endingColors[GREEN_INDEX],
-                        endingColors[BLUE_INDEX]);
+    cycle_color_control(startingColors, endingColors);
      int temp[3] = {};
      memcpy(temp, startingColors, 3);
      memcpy(startingColors, endingColors, 3);
      memcpy(endingColors, temp, 3);
-  }
-  else if (state == STORMY) {
+  } else if (state == CLOUDY) {
+    cycle_color_control(startingCloudColors, endingCloudColors);
+     int temp[3] = {};
+     memcpy(temp, startingCloudColors, 3);
+     memcpy(startingCloudColors, endingCloudColors, 3);
+     memcpy(endingCloudColors, temp, 3);
+  } else if (state == STORMY) {
   //if (random(chance) == 3) {
     handleLightning();
     chance = 10;
@@ -115,14 +117,14 @@ void loop() {
   delay(1000);
 }
 
-void cycle_color_control(int rStart, int gStart, int bStart, int rEnd, int gEnd, int bEnd) {
-  int Rstart = rStart;
-  int Bstart = bStart;
-  int Gstart = gStart;
+void cycle_color_control(int starting[], int ending[]) {
+  int Rstart = starting[RED_INDEX];
+  int Gstart = starting[GREEN_INDEX];
+  int Bstart = starting[BLUE_INDEX];
 
-  int Rend = rEnd;
-  int Gend = gEnd;
-  int Bend = bEnd;
+  int Rend = ending[RED_INDEX];
+  int Gend = ending[GREEN_INDEX];
+  int Bend = ending[BLUE_INDEX];
   int n = 300;
   for(int i = 0; i < n; i++) {// larger values of 'n' will give a smoother/slower transition.
     for(int j = 0; j<strip.numPixels(); j++) {
