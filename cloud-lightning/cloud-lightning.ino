@@ -48,6 +48,29 @@ float yValues[] = {
   1
 };
 
+int delayTimes[] = {
+  1,
+  3,
+  5,
+  5,
+  10,
+  15,
+  30,
+  50,
+  10,
+  15,
+  20,
+  25,
+  25,
+  25,
+  30,
+  50,
+  200,
+  200,
+};
+
+#define numDelayOptions (sizeof(delayTimes)/sizeof(int)) //array size
+
 float simple_moving_average_previous = 0;
 float simple_moving_average_current;
 
@@ -82,7 +105,7 @@ String CLOUD_DAY = String("CLOUDY");
 enum State: byte {
   SUNNY, CLOUDY, STORMY
 };
-State state = CLOUDY; 
+State state = STORMY; 
 int startingColors[] = {5, 1, 0};
 int endingColors[] = {44, 25, 1};
 int startingCloudColors[] = {5, 7, 10};
@@ -176,7 +199,7 @@ void lightningStrike(int pixel) {
   
   strip.setPixelColor(pixel, strip.Color(scaledWhite, scaledWhite, scaledWhite));
   strip.show();
-  delay(random(1, 30));
+  delay(delayTimes[random(numDelayOptions)]);
   currentDataPoint++;
   currentDataPoint = currentDataPoint%NUM_Y_VALUES;
 }
