@@ -90,18 +90,55 @@ int GREEN_INDEX = 1;
 int BLUE_INDEX = 2;
 void loop() {
 
-  //if (readFromBluetooth() == TRIGGER_LIGHTNING_STORM) {
-  if (random(chance) == 3) {
-    int led = random(NUM_LEDS);
-    for (int i = 0; i < 10; i++) {
-      lightningStrike(random(NUM_LEDS));
-    }
+  if(state == SUNNY) {
+    cycle_color_control(startingColors[RED_INDEX], 
+                        startingColors[GREEN_INDEX], 
+                        startingColors[BLUE_INDEX],
+                        endingColors[RED_INDEX],
+                        endingColors[GREEN_INDEX],
+                        endingColors[BLUE_INDEX]);
+     int temp[3] = {};
+     memcpy(temp, startingColors, 3);
+     memcpy(startingColors, endingColors, 3);
+     memcpy(endingColors, temp, 3);
+  }
+  else if (state == STORMY) {
+  //if (random(chance) == 3) {
+    handleLightning();
     chance = 10;
   } else {
     chance = 5;
   }
   turnAllPixelsOff();
   delay(1000);
+}
+
+void cycle_color_control(int rStart, int gStart, int bStart, int rEnd, int gEnd, int bEnd) {
+  int Rstart = rStart;
+  int Bstart = bStart;
+  int Gstart = gStart;
+
+  int Rend = rEnd;
+  int Gend = gEnd;
+  int Bend = bEnd;
+  int n = 300;
+  for(int i = 0; i < n; i++) {// larger values of 'n' will give a smoother/slower transition.
+    for(int j = 0; j<strip.numPixels(); j++) {
+      float Rnew = Rstart + (Rend - Rstart) * i / n;
+      float Gnew = Gstart + (Gend - Gstart) * i / n;
+      float Bnew = Bstart + (Bend - Bstart) * i / n;
+      strip.setPixelColor(j, strip.Color(Rnew, Gnew, Bnew));
+    }
+    strip.show();
+    delay(10);
+  }  
+}
+
+void handleLightning() {
+  int led = random(NUM_LEDS);
+    for (int i = 0; i < 10; i++) {
+      lightningStrike(random(NUM_LEDS));
+    }
 }
 
 /**
