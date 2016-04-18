@@ -2,7 +2,7 @@
 
 Custom-designed remote-controlled buzzer with LEDs. IR reader responds to the OK/MUTE button of the remote.
 
-[![Custom buzzer](http://i.imgur.com/pSZWc4n.jpg)](https://www.youtube.com/watch?v=mZtTcWTQRRo "Click to see the video")
+[![Custom buzzer](http://i.imgur.com/pSZWc4n.jpg?2)](https://www.youtube.com/watch?v=mZtTcWTQRRo "Click to see the video")
 
 ## Instructions
 1. Turn the switch to "on"
@@ -12,9 +12,9 @@ Custom-designed remote-controlled buzzer with LEDs. IR reader responds to the OK
 5. To charge, connect a micro-USB cable to the micro-USB port. When the battery is fully charged, a light on the back will glow green.
 6. With a fully charged battery, this should last at least 3 hours (but probably more).
 
-![Circuit view](http://i.imgur.com/TDTeM19.jpg)
+![Circuit view](http://i.imgur.com/TDTeM19.jpg?2)
 
-![All shipped off!](http://i.imgur.com/HroYwX8.jpg)
+![All shipped off!](http://i.imgur.com/HroYwX8.jpg?2)
 
 Notes:
 IR signal captured using raw_ir_receive.
