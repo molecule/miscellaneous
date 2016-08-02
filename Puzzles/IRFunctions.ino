@@ -29,27 +29,8 @@ void ir_loop() {
   uint32_t received_header = irCopy>>25;
   received_header = received_header << 1;
   
- if (irCode == IR_REMOTE_PLAY) {
-    chasePersist(strip.numPixels(), turquoise);
-    chase();
-  }
-  else if (irCode == IR_REMOTE_SELECT) {
+  if (irCode == IR_REMOTE_SELECT) {
     chasePersist(strip.numPixels(), hot_pink);
-    chase();
-  } else if (received_header == 0x86) {
-
-    badge_id_you = (irCopy>>18)&0x7F;
-    // Send ID over BLE
-    char buffer[32];
-    sprintf(buffer,"AT+QBEACON=%02X,%02X",badge_id_me, badge_id_you);
-    Serial.println(buffer);
-
-    //Compare received code with your code
-    //Serial.println("Received IR comm signal, comparing.. ");
-    uint32_t pixels_to_light = compareAnswers(sending, irCode);
-    //Light up NeoPixels based on the number of matching questions
-    comparisonLights(pixels_to_light, green);
-    delay(30000);
     chase();
   } else if (irCode != 0) {
     chasePersist(strip.numPixels(), yellowOrange);

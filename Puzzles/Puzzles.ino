@@ -28,8 +28,63 @@
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+//******* Button *********//
+const int buttonPin = 8;  // #6 on port D, #8 on port B
+int switchPin = 9;        // #9 on port B
+int buttonVal = LOW;
 
-//******** Neopixel ***********//
+//******* Bluetooth ******//
+String AT_COMMAND_RX_SUCCESSFUL = String("OK");
+String AT_COMMAND_RX_FAILED = String("ERROR");
+String AT_CONNECTION_ESTABLISHED = String("CONNECTED");
+
+//******** Questions *********** //
+uint32_t QUESTION_MASK_ONE = 0x01;
+uint32_t QUESTION_MASK_TWO = 0x02;
+uint32_t QUESTION_MASK_THREE = 0x04;
+uint32_t QUESTION_MASK_FOUR = 0x08;
+uint32_t QUESTION_MASK_FIVE = 0x10;
+uint32_t QUESTION_MASK_SIX = 0x20;
+uint32_t QUESTION_MASK_SEVEN = 0x40;
+uint32_t QUESTION_MASK_EIGHT = 0x80;
+uint32_t QUESTION_MASK_NINE = 0x100;
+uint32_t QUESTION_MASK_TEN = 0x200;
+uint32_t QUESTION_MASK_ELEVEN = 0x400;
+uint32_t QUESTION_MASK_TWELVE = 0x800;
+uint32_t QUESTION_MASK_THIRTEEN = 0x1000;
+uint32_t QUESTION_MASK_FOURTEEN = 0x2000;
+uint32_t QUESTION_MASK_FIFTEEN = 0x4000;
+uint32_t QUESTION_MASK_SIXTEEN = 0x8000;
+uint32_t QUESTION_MASK_SEVENTEEN = 0x10000;
+uint32_t QUESTION_MASK_EIGHTEEN = 0x20000;
+
+uint32_t QUESTION_MASK_MAP[] = {
+  0,
+  QUESTION_MASK_ONE,
+  QUESTION_MASK_TWO,
+  QUESTION_MASK_THREE,
+  QUESTION_MASK_FOUR,
+  QUESTION_MASK_FIVE,
+  QUESTION_MASK_SIX,
+  QUESTION_MASK_SEVEN,
+  QUESTION_MASK_EIGHT,
+  QUESTION_MASK_NINE,
+  QUESTION_MASK_TEN,
+  QUESTION_MASK_ELEVEN,
+  QUESTION_MASK_TWELVE,
+  QUESTION_MASK_THIRTEEN,
+  QUESTION_MASK_FOURTEEN,
+  QUESTION_MASK_FIFTEEN,
+  QUESTION_MASK_SIXTEEN,
+  QUESTION_MASK_SEVENTEEN,
+  QUESTION_MASK_EIGHTEEN
+};
+
+uint32_t questionsAnswered  = 0x0;
+
+int NUM_QUESTIONS = 18;
+
+//******** Neopixel *********** //
 #include <Adafruit_NeoPixel.h>
 #include <avr/power.h>
 
@@ -40,6 +95,17 @@ int brightness = 90;
 int delayVal = 50;
 int pulseDelay = 20;
 int DISPLAY_DELAY = 5000;//ms
+
+// Colors used in the random flash method.
+// just add new {nnn, nnn, nnn}, lines. They will be picked out randomly
+//                          R   G   B
+uint8_t greenColors[][3] = {{30, 44, 0},    // leaf_green
+                            {0, 24, 0},     // green
+                            {0, 50, 24},    // sapphire
+                            {12, 36, 23},   // mediumSeaGreen
+                            {0, 50, 20},    // mediumSpringGreen
+                            };
+#define FAVCOLORS sizeof(greenColors) / 3
 
 uint32_t white         = strip.Color(24, 24, 24);
 uint32_t hot_pink      = strip.Color(48, 0, 24);
@@ -78,6 +144,18 @@ uint32_t turquoise        = strip.Color(13, 45, 42);
 uint32_t mediumTurquoise  = strip.Color(14, 42, 41);
 uint32_t lime  = strip.Color(0, 100, 0);
 
+uint32_t pixelColors[NUM_LEDS];
+uint32_t color;
+float fadeRate = 0.96;
+
+void (*functionPtrs[100])(); //the array of function pointers
+
+//******** Debounce ************//
+uint8_t switch_value;
+uint8_t last_switch_value = 0;
+uint32_t last_switch_change = 0;
+uint32_t last_switch_debounce = 1000;
+
 //******** IR Receive **********//
 #include <IRremote.h>
 
@@ -95,6 +173,7 @@ uint16_t pulses[NUMPULSES][2]; // pair is high and low pulse
 uint16_t currentpulse = 0; // index for pulses we're storing
 uint32_t irCode = 0;
 
+//********* IR Send *********//
 const uint32_t IR_REMOTE_POWER     = 0x8322A15E;
 const uint32_t IR_REMOTE_SELECT    = 0x8322A659;
 const uint32_t IR_REMOTE_MUTE      = 0x8322AE51;
@@ -105,27 +184,161 @@ const uint32_t IR_REMOTE_REWIND    = 0x8322A55A;
 const uint32_t IR_REMOTE_PLAY      = 0x8322B04F;
 const uint32_t IR_REMOTE_FORWARD   = 0x8322A45B;
 
+IRsend irsend;
+uint32_t sending = 0;
+uint32_t header = 0x86000000; // 7 bits
 
-
+uint8_t badge_id_me = 0x86; // 7 bits 135
+uint8_t badge_id_you = 0xFF; // 0xFF no id received over IR
+int mode = 0; // 0: answer questions, 1: send/receive IR
 
 void setup() {
-  // put your setup code here, to run once:
-  
+  //Set up on-board LED
+  pinMode(13, OUTPUT);
+
+  // Switch setup
+  pinMode(switchPin, INPUT);
+  last_switch_value = digitalRead(switchPin);
+  switch_value = last_switch_value;
+
+  if (last_switch_value == HIGH) {
+    mode = 1;
+    digitalWrite(13, HIGH);
+  } else {
+    mode = 0;
+    digitalWrite(13, LOW);
+  }
+
   // Timer setup
   //timer0_init(); //1 ms timer
   timer1_init(100); // varable timer (1000 = 1 second)
+  
+  // Buttons setup
+  pinMode(buttonPin, INPUT);
+  enablePinInterupt(buttonPin);
 
   // Neopixel setup
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
 
+  // initialize array to all zeros
+  memset(pixelColors,0,sizeof(pixelColors));
+
+  // initializes the array of function pointers.
+  functionPtrs[0] = chase;
+  functionPtrs[1] = chaseLime;
+  functionPtrs[2] = chaseHotPink;
+  functionPtrs[3] = chaseTurquoise;
+  functionPtrs[4] = mediumOrchidAlternate;
+  functionPtrs[5] = mediumOrchidBlueAlternate;
+  functionPtrs[6] = chaseFlip;
+  functionPtrs[7] = callSmiley;
+  functionPtrs[8] = sparklePurple;
+  functionPtrs[9] = white_flash_fade;
+  functionPtrs[10] = glitter;
+  functionPtrs[11] = rainbow_replace;
+  functionPtrs[12] = rainbow_sparks;
+  functionPtrs[13] = blue_sparkles;
+  functionPtrs[14] = rainbowCycle;
+  functionPtrs[15] = chaseYellowOrange;
+  functionPtrs[16] = multi_color_blue_yellow;
+  functionPtrs[17] = generate_rotation;
+  functionPtrs[18] = multi_color_blue_green;
+  functionPtrs[99] = red_flash;
+
+  // Bluetooth setup
+  bluetoothSetup();
+
+  // IR setup
+  sending = (header | (((uint32_t)badge_id_me)<<18));
+
+  // Calculating your IR code based on your answers
+  //sending = sending | myAnswers();
+  sending = IR_REMOTE_REWIND;
+  //bluetoothSerial.print("My IR code is ");
+  //bluetoothSerial.println(sending, HEX);
+  
+  delay(100);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  ir_loop();
-
+  if(mode == 0) {
+    displayBasedOnInput( readFromBluetooth() );
+  } else if (mode == 1) {
+    ir_loop();
+  } else if (mode == 2) {
+    partyMode();
+  }
 }
 
+void reportCorrectQuestions() {
+  uint32_t temp = questionsAnswered;
+  for(int i = 1; i <= NUM_QUESTIONS; i++) {
+    if((temp & QUESTION_MASK_MAP[i]) == QUESTION_MASK_MAP[i]) {
+      strip.setPixelColor(i-1, blue);
+      strip.show();
+      delay(20);
+    }
+  }
+}
 
+//################ CREATE YOUR OWN NEOPIXEL FUNCTION BY FILLING IN THIS METHOD! ################
+// Note: you cannot edit the signature.
+void newFunction() {
+
+  
+}
+//#############################################################################################
+
+void callFunction(int index) {
+  (*functionPtrs[index])(); //calls the function at the index of `index` in the array
+}
+
+void button_press() {
+  irsend.sendNEC(sending, 32);
+}
+
+void switch_it()
+{
+  uint8_t current_value = digitalRead(switchPin);
+  
+  if(last_switch_value != switch_value)
+    last_switch_change = millis();
+    
+  if( ((millis()-last_switch_change) > last_switch_debounce)) {
+    if(switch_value != current_value) {
+      switch_value = current_value;
+
+      // 0: answer questions, LED off, 1: send/receive IR, LED on,
+      if(mode == 0) { 
+        mode = 1; 
+        if(badge_id_you!=0xFF) {
+          char buffer[32];
+          sprintf(buffer,"AT+QBEACON=%02X,%02X",badge_id_me, badge_id_you);
+          Serial.println(buffer);
+        }
+        digitalWrite(13, HIGH);
+      } 
+      else { 
+        mode = 0;
+        Serial.println("AT+DATA");
+        digitalWrite(13, LOW);
+      }
+    }
+  }
+  last_switch_value = switch_value;
+}
+
+void switchToPartyMode() {
+  mode = 2;
+}
+
+void partyMode() {
+  for (int i = 1; i <= NUM_QUESTIONS; i++) {
+    callFunction(i);
+    delay(DISPLAY_DELAY/3);
+    callFunction(0);
+    delay(30);
+  }
+}
 
