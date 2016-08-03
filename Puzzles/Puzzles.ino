@@ -33,57 +33,6 @@ const int buttonPin = 8;  // #6 on port D, #8 on port B
 int switchPin = 9;        // #9 on port B
 int buttonVal = LOW;
 
-//******* Bluetooth ******//
-String AT_COMMAND_RX_SUCCESSFUL = String("OK");
-String AT_COMMAND_RX_FAILED = String("ERROR");
-String AT_CONNECTION_ESTABLISHED = String("CONNECTED");
-
-//******** Questions *********** //
-uint32_t QUESTION_MASK_ONE = 0x01;
-uint32_t QUESTION_MASK_TWO = 0x02;
-uint32_t QUESTION_MASK_THREE = 0x04;
-uint32_t QUESTION_MASK_FOUR = 0x08;
-uint32_t QUESTION_MASK_FIVE = 0x10;
-uint32_t QUESTION_MASK_SIX = 0x20;
-uint32_t QUESTION_MASK_SEVEN = 0x40;
-uint32_t QUESTION_MASK_EIGHT = 0x80;
-uint32_t QUESTION_MASK_NINE = 0x100;
-uint32_t QUESTION_MASK_TEN = 0x200;
-uint32_t QUESTION_MASK_ELEVEN = 0x400;
-uint32_t QUESTION_MASK_TWELVE = 0x800;
-uint32_t QUESTION_MASK_THIRTEEN = 0x1000;
-uint32_t QUESTION_MASK_FOURTEEN = 0x2000;
-uint32_t QUESTION_MASK_FIFTEEN = 0x4000;
-uint32_t QUESTION_MASK_SIXTEEN = 0x8000;
-uint32_t QUESTION_MASK_SEVENTEEN = 0x10000;
-uint32_t QUESTION_MASK_EIGHTEEN = 0x20000;
-
-uint32_t QUESTION_MASK_MAP[] = {
-  0,
-  QUESTION_MASK_ONE,
-  QUESTION_MASK_TWO,
-  QUESTION_MASK_THREE,
-  QUESTION_MASK_FOUR,
-  QUESTION_MASK_FIVE,
-  QUESTION_MASK_SIX,
-  QUESTION_MASK_SEVEN,
-  QUESTION_MASK_EIGHT,
-  QUESTION_MASK_NINE,
-  QUESTION_MASK_TEN,
-  QUESTION_MASK_ELEVEN,
-  QUESTION_MASK_TWELVE,
-  QUESTION_MASK_THIRTEEN,
-  QUESTION_MASK_FOURTEEN,
-  QUESTION_MASK_FIFTEEN,
-  QUESTION_MASK_SIXTEEN,
-  QUESTION_MASK_SEVENTEEN,
-  QUESTION_MASK_EIGHTEEN
-};
-
-uint32_t questionsAnswered  = 0x0;
-
-int NUM_QUESTIONS = 18;
-
 //******** Neopixel *********** //
 #include <Adafruit_NeoPixel.h>
 #include <avr/power.h>
@@ -246,9 +195,6 @@ void setup() {
   functionPtrs[18] = multi_color_blue_green;
   functionPtrs[99] = red_flash;
 
-  // Bluetooth setup
-  bluetoothSetup();
-
   // IR setup
   sending = (header | (((uint32_t)badge_id_me)<<18));
 
@@ -262,24 +208,7 @@ void setup() {
 }
 
 void loop() {
-  if(mode == 0) {
-    displayBasedOnInput( readFromBluetooth() );
-  } else if (mode == 1) {
-    ir_loop();
-  } else if (mode == 2) {
-    partyMode();
-  }
-}
-
-void reportCorrectQuestions() {
-  uint32_t temp = questionsAnswered;
-  for(int i = 1; i <= NUM_QUESTIONS; i++) {
-    if((temp & QUESTION_MASK_MAP[i]) == QUESTION_MASK_MAP[i]) {
-      strip.setPixelColor(i-1, blue);
-      strip.show();
-      delay(20);
-    }
-  }
+  ir_loop();
 }
 
 //################ CREATE YOUR OWN NEOPIXEL FUNCTION BY FILLING IN THIS METHOD! ################
@@ -331,14 +260,5 @@ void switch_it()
 
 void switchToPartyMode() {
   mode = 2;
-}
-
-void partyMode() {
-  for (int i = 1; i <= NUM_QUESTIONS; i++) {
-    callFunction(i);
-    delay(DISPLAY_DELAY/3);
-    callFunction(0);
-    delay(30);
-  }
 }
 
