@@ -29,7 +29,7 @@ void ir_loop() {
   uint32_t received_header = irCopy>>25;
   received_header = received_header << 1;
   
-  if (irCode == IR_REMOTE_SELECT) {
+  if (irCode == IR_REMOTE_REWIND) {
     chasePersist(strip.numPixels(), hot_pink);
     chase();
   } else if (irCode != 0) {

@@ -49,7 +49,7 @@ void enablePinInterupt(byte pin)
 
 ISR (PCINT0_vect) // handle pin change interrupt for D8 to D13 here
 {
-  if(digitalRead(buttonPin)) {  button_press(); }
+  //if(digitalRead(buttonPin)) {  button_press(); }
   //if(digitalRead(switchPin)) { switch_change(); }
 }
 
@@ -67,7 +67,7 @@ SIGNAL(TIMER0_COMPA_vect)
 // Timer1 compare interrupt service routine
 SIGNAL(TIMER1_COMPA_vect)
 {
-  switch_it();
+  //switch_it();
 }
 
 
