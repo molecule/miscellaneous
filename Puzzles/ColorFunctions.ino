@@ -331,6 +331,24 @@ void cycle_color_flash(int rStart, int gStart, int bStart) {
   }  
 }
 
+static void chaseCCW() {
+  for(uint16_t i=strip.numPixels()-1; i<=0-1; i--) {
+      strip.setPixelColor(i  , blue); // Draw new pixel
+      strip.setPixelColor(i+1, 0); // Erase pixel a few steps back
+      strip.setBrightness(brightness); strip.show();
+      delay(delayVal);
+  }
+}
+
+static void chasePersistCCW(int numPixels, uint32_t c) {
+ for(int i=numPixels-1;i>=0;i--) {
+    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+    strip.setPixelColor(i, c); // Moderately bright green color.
+    strip.show(); // This sends the updated pixel color to the hardware.
+    delay(delayVal); // Delay for a period of time (in milliseconds).
+  } 
+}
+
 static void chasePersist(int numPixels, uint32_t c) {
  for(int i=0;i<numPixels;i++) {
     // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255

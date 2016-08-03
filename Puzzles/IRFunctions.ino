@@ -32,9 +32,9 @@ void ir_loop() {
     delay(delayVal);
     qcom_blue_flash();
     //chase();
-  } else if (irCode = IR_REMOTE_REWIND && PUZZLE == 2) {
-    chasePersist(strip.numPixels(), deep_purple);
-    chase();
+  } else if (irCode = IR_REMOTE_PLAY && PUZZLE == 2) {
+    chasePersistCCW(strip.numPixels(), deep_purple);
+    chaseCCW();
   } else if (irCode != 0) {
     chasePersist(strip.numPixels(), yellowOrange);
     chase();
