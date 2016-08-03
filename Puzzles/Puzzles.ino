@@ -95,14 +95,6 @@ uint32_t pixelColors[NUM_LEDS];
 uint32_t color;
 float fadeRate = 0.96;
 
-void (*functionPtrs[100])(); //the array of function pointers
-
-//******** Debounce ************//
-uint8_t switch_value;
-uint8_t last_switch_value = 0;
-uint32_t last_switch_change = 0;
-uint32_t last_switch_debounce = 1000;
-
 //******** IR Receive **********//
 #include <IRremote.h>
 
@@ -138,11 +130,6 @@ uint32_t header = 0x86000000; // 7 bits
 void setup() {
   //Set up on-board LED
   pinMode(13, OUTPUT);
-
-  // Switch setup
-  pinMode(switchPin, INPUT);
-  last_switch_value = digitalRead(switchPin);
-  switch_value = last_switch_value;
 
   // Timer setup
   //timer0_init(); //1 ms timer
