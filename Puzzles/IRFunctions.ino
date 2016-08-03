@@ -52,7 +52,7 @@ void ir_loop() {
 */
 uint16_t listenForIR() {  // IR receive code
   currentpulse = 0;
-  while (mode) {
+  while (true) {
    unsigned int highpulse, lowpulse;  // temporary storage timing
    highpulse = lowpulse = 0; // start out with no pulse length 
   

@@ -135,10 +135,6 @@ IRsend irsend;
 uint32_t sending = 0;
 uint32_t header = 0x86000000; // 7 bits
 
-uint8_t badge_id_me = 0x86; // 7 bits 135
-uint8_t badge_id_you = 0xFF; // 0xFF no id received over IR
-int mode = 0; // 0: answer questions, 1: send/receive IR
-
 void setup() {
   //Set up on-board LED
   pinMode(13, OUTPUT);
@@ -148,14 +144,6 @@ void setup() {
   last_switch_value = digitalRead(switchPin);
   switch_value = last_switch_value;
 
-  if (last_switch_value == HIGH) {
-    mode = 1;
-    digitalWrite(13, HIGH);
-  } else {
-    mode = 0;
-    digitalWrite(13, LOW);
-  }
-
   // Timer setup
   //timer0_init(); //1 ms timer
   timer1_init(100); // varable timer (1000 = 1 second)
@@ -163,9 +151,6 @@ void setup() {
   // Neopixel setup
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
-
-  // initialize array to all zeros
-  memset(pixelColors,0,sizeof(pixelColors));
   
   delay(100);
 }
@@ -173,12 +158,3 @@ void setup() {
 void loop() {
   ir_loop();
 }
-
-//################ CREATE YOUR OWN NEOPIXEL FUNCTION BY FILLING IN THIS METHOD! ################
-// Note: you cannot edit the signature.
-void newFunction() {
-
-  
-}
-//#############################################################################################
-
