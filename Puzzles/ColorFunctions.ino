@@ -10,6 +10,10 @@ void turquoise_flash() {
   cycle_color_flash(25, 51, 42);
 }
 
+void qcom_blue_flash() {
+  cycle_color_flash(0, 51, 160);
+}
+
 void chaseBlue() {
   chasePersist(strip.numPixels(), blue);
   delay(DISPLAY_DELAY/2);
