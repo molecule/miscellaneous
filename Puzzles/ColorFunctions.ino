@@ -196,20 +196,6 @@ static void flip(int i, uint32_t c){
   strip.setBrightness(brightness); strip.show();
 }
 
-
-// a chaotic sparkle of all different colours.
-void rainbow_sparks() {
-  for (int j = 0; j<500;j++) {
-    color = Wheel(random(256));
-    int i = random(32);
-    strip.setPixelColor(i, color);
-    strip.setBrightness(brightness); strip.show();
-    delay(8);
-    strip.setPixelColor(i, 0);
-    delay(8);
-  }
-}
-
 // An equally distributed rainbow. Is there any other kind?
 void rainbowCycle() {
   uint8_t wait = 5;
@@ -233,97 +219,6 @@ void white_flash_fade() {
   strip.setBrightness(brightness); strip.show();
   delay(50);
   }
-}
-
-// Turns on LEDs one at a time, and then randomly changes one at a time.
-void rainbow_replace() {
-  for (int j=0; j<2500; j++) {
-   if (random(8) == 1) {
-      uint16_t i = random(NUM_LEDS);
-      pixelColors[i] = Wheel((i+random(256)) & 255);
-    }
-    
-    for(int i = 0; i < NUM_LEDS; i++) {
-      if (pixelColors[i] > 1) {
-        strip.setPixelColor(i, pixelColors[i]);
-        
-      } else {
-        strip.setPixelColor(i, 0, 0, 0);
-      }
-    }
-    strip.setBrightness(brightness); strip.show();
-    delay(2);
-  }
-}
-
-// A tasteful sparkle of blue.
-void blue_sparkles() {
-  for(int j=0; j<1000; j++) {
-   if (random(8) == 1) {
-      uint16_t i = random(NUM_LEDS);
-      if (pixelColors[i] < 1) {
-        pixelColors[i] = random(256);
-      }
-    }
-    
-    for(int i = 0; i < NUM_LEDS; i++) {
-      if (pixelColors[i] > 1) {
-        strip.setPixelColor(i, pixelColors[i]);
-        
-        if (pixelColors[i] > i) {
-          pixelColors[i] = pixelColors[i] * fadeRate;
-          //pixelColors[i] = pixelColors[i] >> 1;
-        } else {
-          pixelColors[i] = 0;
-        }
-        
-      } else {
-        strip.setPixelColor(i, 0, 0, 0);
-      }
-    }
-    strip.setBrightness(brightness); strip.show();
-    delay(5);
-  }
-}
-
-void glitter() {
-  for(int i=0; i<5; i++) {
-    flashRandom(5, 15);
-  }
-}
-
-void callSmiley() {
-  smiley(green);
-}
-
-static void smiley(uint32_t eye_color) {
-  int interval = 1;
-  //Glow the background first
-  for(int bright_val= 1; bright_val <= 20; bright_val += interval){
-     setAll(strip.Color(0, 0, bright_val));
-     strip.setBrightness(brightness); strip.show();
-     delay(pulseDelay);
-  }
-  
-  //glow eyes
-  strip.setPixelColor(12, eye_color);
-  strip.setBrightness(brightness); strip.show();
-  delay(100);
-  strip.setPixelColor(9, eye_color);
-  strip.setBrightness(brightness); strip.show();
-  delay(100);
-
-  strip.setPixelColor(strip.numPixels()-3, eye_color);
-  delay(100);
-  strip.setBrightness(brightness); strip.show();
-  
-  //glow smile
-  for(int i =0; i <=6; i++) {
-     strip.setPixelColor(i, eye_color);
-     strip.setBrightness(brightness); strip.show();
-     delay(200);
-  }
-  delay(1500);
 }
 
 //sets the strip to all one color
@@ -430,43 +325,6 @@ void cycle_color_flash(int rStart, int gStart, int bStart) {
     strip.setBrightness(brightness); strip.show();
     delay(10);
   }  
-}
-
-
-void flashRandom(int wait, uint8_t howmany) {
- 
-  for(uint16_t i=0; i<howmany; i++) {
-    // pick a random favorite color!
-    int c = random(FAVCOLORS);
-    int red = greenColors[c][0];
-    int green = greenColors[c][1];
-    int blue = greenColors[c][2]; 
- 
-    // get a random pixel from the list
-    int j = random(strip.numPixels());
-    
-    // now we will 'fade' it in 5 steps
-    for (int x=0; x < 5; x++) {
-      int r = red * (x+1); r /= 5;
-      int g = green * (x+1); g /= 5;
-      int b = blue * (x+1); b /= 5;
-      
-      strip.setPixelColor(j, strip.Color(r, g, b));
-      strip.setBrightness(brightness); strip.show();
-      delay(wait);
-    }
-    // & fade out in 5 steps
-    for (int x=5; x >= 0; x--) {
-      int r = red * x; r /= 5;
-      int g = green * x; g /= 5;
-      int b = blue * x; b /= 5;
-      
-      strip.setPixelColor(j, strip.Color(r, g, b));
-      strip.setBrightness(brightness); strip.show();
-      delay(wait);
-    }
-  }
-  // LEDs will be off when done (they are faded to 0)
 }
 
 static void chasePersist(int numPixels, uint32_t c) {

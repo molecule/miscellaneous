@@ -28,8 +28,6 @@
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//******* Button *********//
-int switchPin = 9;        // #9 on port B
 
 //******** Neopixel *********** //
 #include <Adafruit_NeoPixel.h>
@@ -42,17 +40,6 @@ int brightness = 90;
 int delayVal = 50;
 int pulseDelay = 20;
 int DISPLAY_DELAY = 5000;//ms
-
-// Colors used in the random flash method.
-// just add new {nnn, nnn, nnn}, lines. They will be picked out randomly
-//                          R   G   B
-uint8_t greenColors[][3] = {{30, 44, 0},    // leaf_green
-                            {0, 24, 0},     // green
-                            {0, 50, 24},    // sapphire
-                            {12, 36, 23},   // mediumSeaGreen
-                            {0, 50, 20},    // mediumSpringGreen
-                            };
-#define FAVCOLORS sizeof(greenColors) / 3
 
 uint32_t white         = strip.Color(24, 24, 24);
 uint32_t hot_pink      = strip.Color(48, 0, 24);
@@ -90,10 +77,6 @@ uint32_t aquamarine       = strip.Color(25, 51, 42);
 uint32_t turquoise        = strip.Color(13, 45, 42);
 uint32_t mediumTurquoise  = strip.Color(14, 42, 41);
 uint32_t lime  = strip.Color(0, 100, 0);
-
-uint32_t pixelColors[NUM_LEDS];
-uint32_t color;
-float fadeRate = 0.96;
 
 //******** IR Receive **********//
 #include <IRremote.h>
