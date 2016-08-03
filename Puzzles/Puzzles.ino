@@ -166,37 +166,6 @@ void setup() {
 
   // initialize array to all zeros
   memset(pixelColors,0,sizeof(pixelColors));
-
-  // initializes the array of function pointers.
-  functionPtrs[0] = chase;
-  functionPtrs[1] = chaseLime;
-  functionPtrs[2] = chaseHotPink;
-  functionPtrs[3] = chaseTurquoise;
-  functionPtrs[4] = mediumOrchidAlternate;
-  functionPtrs[5] = mediumOrchidBlueAlternate;
-  functionPtrs[6] = chaseFlip;
-  functionPtrs[7] = callSmiley;
-  functionPtrs[8] = sparklePurple;
-  functionPtrs[9] = white_flash_fade;
-  functionPtrs[10] = glitter;
-  functionPtrs[11] = rainbow_replace;
-  functionPtrs[12] = rainbow_sparks;
-  functionPtrs[13] = blue_sparkles;
-  functionPtrs[14] = rainbowCycle;
-  functionPtrs[15] = chaseYellowOrange;
-  functionPtrs[16] = multi_color_blue_yellow;
-  functionPtrs[17] = generate_rotation;
-  functionPtrs[18] = multi_color_blue_green;
-  functionPtrs[99] = red_flash;
-
-  // IR setup
-  sending = (header | (((uint32_t)badge_id_me)<<18));
-
-  // Calculating your IR code based on your answers
-  //sending = sending | myAnswers();
-  sending = IR_REMOTE_REWIND;
-  //bluetoothSerial.print("My IR code is ");
-  //bluetoothSerial.println(sending, HEX);
   
   delay(100);
 }
@@ -213,9 +182,6 @@ void newFunction() {
 }
 //#############################################################################################
 
-void callFunction(int index) {
-  (*functionPtrs[index])(); //calls the function at the index of `index` in the array
-}
 
 void switch_it()
 {
