@@ -182,39 +182,3 @@ void newFunction() {
 }
 //#############################################################################################
 
-
-void switch_it()
-{
-  uint8_t current_value = digitalRead(switchPin);
-  
-  if(last_switch_value != switch_value)
-    last_switch_change = millis();
-    
-  if( ((millis()-last_switch_change) > last_switch_debounce)) {
-    if(switch_value != current_value) {
-      switch_value = current_value;
-
-      // 0: answer questions, LED off, 1: send/receive IR, LED on,
-      if(mode == 0) { 
-        mode = 1; 
-        if(badge_id_you!=0xFF) {
-          char buffer[32];
-          sprintf(buffer,"AT+QBEACON=%02X,%02X",badge_id_me, badge_id_you);
-          Serial.println(buffer);
-        }
-        digitalWrite(13, HIGH);
-      } 
-      else { 
-        mode = 0;
-        Serial.println("AT+DATA");
-        digitalWrite(13, LOW);
-      }
-    }
-  }
-  last_switch_value = switch_value;
-}
-
-void switchToPartyMode() {
-  mode = 2;
-}
-
