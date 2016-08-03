@@ -25,11 +25,9 @@ void ir_loop() {
   //Serial.println(irCode, HEX);
   
   //Check received IR code for comm header
-  uint32_t irCopy = irCode;
-  uint32_t received_header = irCopy>>25;
-  received_header = received_header << 1;
+  uint32_t irCopy = (irCode >> 20) << 12;
   
-  if (irCode == IR_REMOTE_REWIND) {
+  if (irCode == IR_REMOTE_PLAY) {
     chasePersist(strip.numPixels(), hot_pink);
     chase();
   } else if (irCode != 0) {

@@ -122,16 +122,10 @@ const uint32_t IR_REMOTE_REWIND    = 0x8322A55A;
 const uint32_t IR_REMOTE_PLAY      = 0x8322B04F;
 const uint32_t IR_REMOTE_FORWARD   = 0x8322A45B;
 
-uint32_t header = 0x86000000; // 7 bits
+uint32_t header = 0x83220000; // 7 bits
 
 void setup() {
-  //Set up on-board LED
-  pinMode(13, OUTPUT);
-
-  // Timer setup
-  //timer0_init(); //1 ms timer
-  //timer1_init(100); // varable timer (1000 = 1 second)
-
+  
   // Neopixel setup
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
