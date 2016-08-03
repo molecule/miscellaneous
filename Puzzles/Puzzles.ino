@@ -112,7 +112,6 @@ uint16_t pulses[NUMPULSES][2]; // pair is high and low pulse
 uint16_t currentpulse = 0; // index for pulses we're storing
 uint32_t irCode = 0;
 
-//********* IR Send *********//
 const uint32_t IR_REMOTE_POWER     = 0x8322A15E;
 const uint32_t IR_REMOTE_SELECT    = 0x8322A659;
 const uint32_t IR_REMOTE_MUTE      = 0x8322AE51;
@@ -123,8 +122,6 @@ const uint32_t IR_REMOTE_REWIND    = 0x8322A55A;
 const uint32_t IR_REMOTE_PLAY      = 0x8322B04F;
 const uint32_t IR_REMOTE_FORWARD   = 0x8322A45B;
 
-IRsend irsend;
-uint32_t sending = 0;
 uint32_t header = 0x86000000; // 7 bits
 
 void setup() {
@@ -133,7 +130,7 @@ void setup() {
 
   // Timer setup
   //timer0_init(); //1 ms timer
-  timer1_init(100); // varable timer (1000 = 1 second)
+  //timer1_init(100); // varable timer (1000 = 1 second)
 
   // Neopixel setup
   strip.begin();

@@ -64,10 +64,4 @@ SIGNAL(TIMER0_COMPA_vect)
   }
 }
 
-// Timer1 compare interrupt service routine
-SIGNAL(TIMER1_COMPA_vect)
-{
-  //switch_it();
-}
-
 
