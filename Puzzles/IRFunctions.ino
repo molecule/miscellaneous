@@ -27,8 +27,13 @@ void ir_loop() {
   //Check received IR code for comm header
   uint32_t irCopy = (irCode >> 20) << 12;
   
-  if (irCode == IR_REMOTE_PLAY) {
-    chasePersist(strip.numPixels(), hot_pink);
+  if (irCode == IR_REMOTE_PLAY && PUZZLE == 1) {
+    qcom_blue_flash();
+    delay(delayVal);
+    qcom_blue_flash();
+    //chase();
+  } else if (irCode = IR_REMOTE_REWIND && PUZZLE == 2) {
+    chasePersist(strip.numPixels(), deep_purple);
     chase();
   } else if (irCode != 0) {
     chasePersist(strip.numPixels(), yellowOrange);
