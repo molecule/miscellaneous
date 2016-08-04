@@ -66,7 +66,6 @@ void plasma() {
       //strip.setPixelColor(col + (8 * row), strip.Color(color_1/4, color_2, color_3*5));
     }
   }
-  strip.setBrightness(75);
   strip.show();
 }
 

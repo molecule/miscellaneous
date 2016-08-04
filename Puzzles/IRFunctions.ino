@@ -36,7 +36,7 @@ void ir_loop() {
     chaseCCW();
   } else if (irCode == IR_REMOTE_PLAY && PUZZLE == 3) {
     red_flash();
-    for (int i = 0; i<10000; i++) {
+    for (int i = 0; i<2500; i++) {
       plasma();
     }
     chase();
