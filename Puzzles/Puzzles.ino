@@ -29,7 +29,7 @@
  */
 
 //******** Puzzle *************//
-#define PUZZLE 2
+#define PUZZLE 3
 
 //******** Neopixel *********** //
 #include <Adafruit_NeoPixel.h>

@@ -31,10 +31,15 @@ void ir_loop() {
     qcom_blue_flash();
     delay(delayVal);
     qcom_blue_flash();
-    //chase();
-  } else if (irCode = IR_REMOTE_PLAY && PUZZLE == 2) {
+  } else if (irCode == IR_REMOTE_PLAY && PUZZLE == 2) {
     chasePersistCCW(strip.numPixels(), deep_purple);
     chaseCCW();
+  } else if (irCode == IR_REMOTE_PLAY && PUZZLE == 3) {
+    red_flash();
+    for (int i = 0; i<10000; i++) {
+      plasma();
+    }
+    chase();
   } else if (irCode != 0) {
     chasePersist(strip.numPixels(), yellowOrange);
     chase();
