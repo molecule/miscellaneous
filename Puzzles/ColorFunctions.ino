@@ -5,8 +5,8 @@ struct Point {
 };
 
 
-float phase = 0.0;
-float phaseIncrement = 0.03;  // Controls the speed of the moving points. Higher == faster. I like 0.08 .
+float phase = random(100)/10;
+float phaseIncrement = 0.03;  // Controls thchasee speed of the moving points. Higher == faster. I like 0.08 .
 float colorStretch = 0.11;    // Higher numbers will produce tighter color bands. I like 0.11 .
 
 // This function is called every frame.
@@ -57,12 +57,17 @@ void plasma() {
       color_4 *= color_4;
  
       // Scale the color up to 0..7 . Max brightness is 7.
-      //strip.setPixelColor(col + (8 * row), strip.Color(color_4, 0, 0) );
 
-       // perfect fairies
-      strip.setPixelColor(col + (8 * row), strip.Color(color_2, color_3, color_1));
-      
+      // calming Seaside
       //strip.setPixelColor(col + (8 * row), strip.Color(color_1, color_2, color_3));
+
+      // perfect fairies
+      strip.setPixelColor(col + (8 * row), strip.Color(color_2, color_3, color_1));
+
+      //original
+      //strip.setPixelColor(col + (8 * row), strip.Color(color_1, color_2, color_3));
+      
+      // twitchy sparkles
       //strip.setPixelColor(col + (8 * row), strip.Color(color_1/4, color_2, color_3*5));
     }
   }
@@ -402,24 +407,6 @@ void cycle_color_flash(int rStart, int gStart, int bStart) {
     strip.setBrightness(brightness); strip.show();
     delay(10);
   }  
-}
-
-static void chaseCCW() {
-  for(uint16_t i=strip.numPixels()-1; i<=0-1; i--) {
-      strip.setPixelColor(i  , blue); // Draw new pixel
-      strip.setPixelColor(i+1, 0); // Erase pixel a few steps back
-      strip.setBrightness(brightness); strip.show();
-      delay(delayVal);
-  }
-}
-
-static void chasePersistCCW(int numPixels, uint32_t c) {
- for(int i=numPixels-1;i>=0;i--) {
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    strip.setPixelColor(i, c); // Moderately bright green color.
-    strip.show(); // This sends the updated pixel color to the hardware.
-    delay(delayVal); // Delay for a period of time (in milliseconds).
-  } 
 }
 
 static void chasePersist(int numPixels, uint32_t c) {

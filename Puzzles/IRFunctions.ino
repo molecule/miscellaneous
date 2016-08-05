@@ -31,19 +31,20 @@ void ir_loop() {
     qcom_blue_flash();
     delay(delayVal);
     qcom_blue_flash();
-  } else if (irCode == IR_REMOTE_PLAY && PUZZLE == 2) {
-    chasePersistCCW(strip.numPixels(), deep_purple);
-    chaseCCW();
-  } else if (irCode == IR_REMOTE_PLAY && PUZZLE == 3) {
-    red_flash();
-    for (int i = 0; i<2500; i++) {
+  } else if (irCode == IR_PUZZLE_TWO && PUZZLE == 2) {
+    chasePersist(strip.numPixels(), deep_purple);
+    chase();
+  } else if (irCode == IR_PUZZLE_THREE && PUZZLE == 3) {
+    for (int i = 0; i<100; i++) {
       plasma();
     }
     chase();
-  } else if (irCode != 0) {
+  } 
+  /*else if (irCode != 0) {
     chasePersist(strip.numPixels(), yellowOrange);
     chase();
   }
+  */
   memset(pulses, 0, sizeof(pulses));
   
 }

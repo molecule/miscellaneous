@@ -98,8 +98,8 @@ uint16_t currentpulse = 0; // index for pulses we're storing
 uint32_t irCode = 0;
 
 const uint32_t IR_REMOTE_POWER     = 0x8322A15E;
-const uint32_t IR_REMOTE_SELECT    = 0x8322A659;
-const uint32_t IR_REMOTE_MUTE      = 0x8322AE51;
+const uint32_t IR_PUZZLE_THREE     = 0x8322A659;
+const uint32_t IR_PUZZLE_TWO       = 0x8322AE51;
 const uint32_t IR_REMOTE_V_UP      = 0x8322A25D;
 const uint32_t IR_REMOTE_V_DOWN    = 0x8322A35C;
 const uint32_t IR_REMOTE_MODE      = 0x8322B24D;
