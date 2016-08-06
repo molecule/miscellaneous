@@ -99,8 +99,8 @@ uint32_t irCode = 0;
 
 const uint32_t IR_REMOTE_POWER     = 0x8322A15E;
 const uint32_t IR_PUZZLE_THREE     = 0x8322A659;
-const uint32_t IR_PUZZLE_TWO       = 0x8322AE51;
-const uint32_t IR_REMOTE_V_UP      = 0x8322A25D;
+const uint32_t IR_PUZZLE_ONE       = 0x8322AE51;
+const uint32_t IR_PUZZLE_TWO       = 0x8322A25D;
 const uint32_t IR_REMOTE_V_DOWN    = 0x8322A35C;
 const uint32_t IR_REMOTE_MODE      = 0x8322B24D;
 const uint32_t IR_REMOTE_REWIND    = 0x8322A55A;
@@ -110,7 +110,6 @@ const uint32_t IR_REMOTE_FORWARD   = 0x8322A45B;
 uint32_t header = 0x83220000; // 7 bits
 
 void setup() {
-  
   // Neopixel setup
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'

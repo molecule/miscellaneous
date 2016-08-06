@@ -26,8 +26,8 @@ void ir_loop() {
   
   //Check received IR code for comm header
   uint32_t irCopy = (irCode >> 20) << 12;
-  
-  if (irCode == IR_REMOTE_PLAY && PUZZLE == 1) {
+
+  if (irCode == IR_PUZZLE_ONE && PUZZLE == 1) {
     qcom_blue_flash();
     delay(delayVal);
     qcom_blue_flash();
@@ -35,16 +35,13 @@ void ir_loop() {
     chasePersist(strip.numPixels(), deep_purple);
     chase();
   } else if (irCode == IR_PUZZLE_THREE && PUZZLE == 3) {
-    for (int i = 0; i<100; i++) {
+    for (int i = 0; i<2500; i++) {
       plasma();
     }
     chase();
-  } 
-  /*else if (irCode != 0) {
-    chasePersist(strip.numPixels(), yellowOrange);
-    chase();
+  } else if (irCode != 0) {
+    red_flash();
   }
-  */
   memset(pulses, 0, sizeof(pulses));
   
 }
